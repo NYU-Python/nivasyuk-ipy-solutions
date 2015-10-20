@@ -67,6 +67,9 @@ def get_file_paths(directory):
 
 def main(directory, criterion, top_n, sort_direction):
 
+    if not os.path.exists(directory):
+        raise ValueError("Invalid path: {0}".format(directory))
+        
     file_paths = get_file_paths(directory)
     file_data = get_file_data(file_paths)
     summarize(file_data, criterion, top_n, sort_direction)
