@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 """
 Write a "file list" program that reads a directory (or optionally, a directory tree) and then presents the "top n" files sorted by one of three criteria:  filename, file size or last modification time.
@@ -16,6 +15,13 @@ import time
 #---------------------------------------------------------------------------#
 
 def summarize(file_data, criterion, top_n, sort_direction):
+    """
+    produces results summary - given the file data, criterion and sort direction
+    :param file_data: dict mapping file paths to file info
+    :param criterion: one of size, mtime, or name
+    :param top_n: number of results to display
+    :param sort_direction: ascending or descending
+    """
 
     if sort_direction == 'descending':
         sorted_data = sorted(file_data,
@@ -25,17 +31,21 @@ def summarize(file_data, criterion, top_n, sort_direction):
         sorted_data = sorted(file_data,
                              key=lambda path: file_data[path][criterion])
 
-
     for path in sorted_data[:top_n]:
         print "{0}:\t{1} bytes. Last modified on: {2}".format(
             file_data[path]['name'],
             file_data[path]['size'],
             time.ctime(file_data[path]['mtime'])
         )
-        
+
 #---------------------------------------------------------------------------#
 
 def get_file_data(file_paths):
+    """
+    given the file-paths, returns a dict of paths' data (size, mod time and name)
+    :param file_paths: list of file paths
+    :return: dict mapping file paths to file info
+    """
 
     file_data = {}
 
@@ -54,6 +64,11 @@ def get_file_data(file_paths):
 #---------------------------------------------------------------------------#
 
 def get_file_paths(directory):
+    """
+    given a directory, walks through it, returns all file paths of directory.
+    :param directory: directory path
+    :return: list of all file paths (on all levels)
+    """
 
     list_paths = []
 
@@ -66,15 +81,24 @@ def get_file_paths(directory):
 #---------------------------------------------------------------------------#
 
 def main(directory, criterion, top_n, sort_direction):
+    """
+    main function implementing the assignment
+    :param directory: full directory path to traverse
+    :param criterion: one of size, mtime, or name
+    :param top_n: number of results to display
+    :param sort_direction: ascending or descending
+    """
 
     if not os.path.exists(directory):
         raise ValueError("Invalid path: {0}".format(directory))
-        
+
     file_paths = get_file_paths(directory)
     file_data = get_file_data(file_paths)
     summarize(file_data, criterion, top_n, sort_direction)
 
 #---------------------------------------------------------------------------#
+
+### define and verify args with argparse
 
 if __name__ == "__main__":
 
@@ -95,4 +119,3 @@ if __name__ == "__main__":
     except ValueError as e:
         print "Error: ", e
         parser.print_usage()
-#---------------------------------------------------------------------------#
