@@ -1,0 +1,82 @@
+import pytest as pt
+import stock_prices_summary as sps
+
+
+
+def test_acquire_data():
+
+    # check for errors
+    with pt.raises(IOError):
+        sps.acquire_data('invalid_file', 1)
+
+    with pt.raises(ValueError):
+        sps.acquire_data('../data/stock_prices/aapl.csv', 'hello')
+
+    # test for success
+    assert sps.acquire_data('../data/stock_prices/aapl.csv', 3) == [114.71, 115.0, 114.32]
+
+
+def test_is_all_numbers():
+
+    # test for errors
+    with pt.raises(TypeError):
+        sps.is_all_numbers(10)
+
+    # test for success
+    assert sps.is_all_numbers([3, 2, 3.5]) == True
+    assert sps.is_all_numbers([3, 'hello', 3.5]) == False
+
+
+def test_get_median():
+
+    with pt.raises(TypeError):
+        sps.get_median([3, 'hello', 3.5])
+
+    assert sps.get_median([3, 2, 3.5]) == 3
+    assert sps.get_median([3, 2, 3.5, 4]) == 3.25
+
+def test_get_centered():
+
+    with pt.raises(TypeError):
+        sps.get_centered([3, 'hello', 3.5])
+
+    assert sps.get_centered([1, 2, 2, 3, 3.5]) == 2.5
+
+
+def test_get_average():
+
+    with pt.raises(TypeError):
+        sps.get_average([3, 'hello', 3.5])
+
+    assert sps.get_average([1, 2, 2, 3, 3.5]) == 2.3
+
+
+def test_get_filename_from_ticker():
+
+    with pt.raises(AttributeError):
+        sps.get_filename_from_ticker(3)
+
+    assert sps.get_filename_from_ticker('aapl') == '/Users/Natalie/Work/main/python_practice/nyu_inter_python/data/stock_prices/aapl.csv'
+
+
+def test_validate_args():
+
+    with pt.raises(ValueError):
+        sps.validate_args('mass', '3', 'aapl')
+
+    with pt.raises(IOError):
+        sps.validate_args('max', '3', 'apl')
+
+    with pt.raises(ValueError):
+        sps.validate_args('max', 'a', 'aapl')
+
+    assert sps.validate_args('max', '3', 'aapl') == '/Users/Natalie/Work/main/python_practice/nyu_inter_python/data/stock_prices/aapl.csv'
+
+
+def test_parse_args():
+
+    with pt.raises(IndexError):
+        sps.parse_args(['arg_one', 'arg_two'])
+
+    assert sps.parse_args(['max', '3', 'aapl']) == ('max', '3', 'aapl')
+
