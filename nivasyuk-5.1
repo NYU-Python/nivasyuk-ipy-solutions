@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+class PersistDict(dict):
+
+    def load_file(self):
+
+        lines = self.fh.readlines()
+        for line in lines:
+            parts = line.rstrip('\n').split('=', 1)
+            key = parts[0]
+            val = parts[1]
+            #print "Setting {0} = {1}".format(key, val)
+            dict.__setitem__(self, key, val)
+
+    def __init__(self, filename):
+
+        dict.__init__(self)
+
+        self.filename = filename
+        self.fh = open(filename, 'r+')
+        self.load_file()
+
+    def __setitem__(self, key, value):
+
+        # call dict's set item
+        dict.__setitem__(self, key, value)
+
+        line = "{0}={1}\n".format(key, value)
+        self.fh.write(line)
+
+    def __delitem__(self, del_key):
+
+        # call dict's del item
+        dict.__delitem__(self, del_key)
+
+        self.fh.seek(0)
+        lines = self.fh.readlines()
+
+        self.fh.seek(0)
+        for line in lines:
+            parts = line.rstrip('\n').split('=', 1)
+            key = parts[0]
+            val = parts[1]
+            if key != del_key:
+                self.fh.write(line)
+                
+        self.fh.truncate()
